@@ -1,0 +1,32 @@
+// color-mix, not the oklch(from …) used elsewhere: that derives from a named
+// token, and `from currentColor` failing would leave no border at all.
+.tag-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+  // 4px, the radius the old checkbox used.
+  border-radius: var(--radius-sm);
+
+  // `--ds-chip-border` is where the utility puts the tag's hue, darkened back
+  // towards what a user picked. A system tag sets none, so this is the ink.
+  &--on {
+    border-color: transparent;
+    background-color: oklch(
+      from var(--ds-chip-border, currentColor) calc(l - 0.35) calc(c * 2.2) h
+    );
+  }
+}
+
+// A swatch has no label, so the chip collapses to its padding. In the grids it
+// has to fill its cell or there is almost nothing to click. Scoped there
+// rather than to every swatch: ColourSelect's trigger is one too and it sizes
+// to its content.
+.tag--select .ds-chip.tag--swatch {
+  width: 100%;
+  height: 34px;
+  justify-content: center;
+}

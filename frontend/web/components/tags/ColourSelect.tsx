@@ -27,8 +27,8 @@ const ColourSelect: FC<ColourSelectType> = ({ onChange, value: _value }) => {
             {Constants.tagColors.map((color) => (
               <div key={color} className='tag--select'>
                 <Tag
-                  onClick={(tag) => {
-                    onChange(tag.color)
+                  onClick={() => {
+                    onChange(color)
                     setIsOpen(false)
                   }}
                   selected={value === color}

@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useState } from 'react'
 import TableFilter from './TableFilter'
 import Input from 'components/base/forms/Input'
 import Utils from 'common/utils/utils'
@@ -40,20 +40,15 @@ const TableTagFilter: FC<TableFilterType> = ({
     { skip: !projectId },
   )
 
-  const isFeatureHealthEnabled = Utils.getFlagsmithHasFeature('feature_health')
-  const flagGatedTags = useMemo(() => {
-    let tags = data
-    if (!isFeatureHealthEnabled)
-      tags = tags?.filter((tag) => tag.type !== 'UNHEALTHY')
-    if (excludeTag) tags = tags?.filter((tag) => !excludeTag(tag))
-    return tags
-  }, [data, isFeatureHealthEnabled, excludeTag])
+  // Not memoised: tagVisible reads a feature flag that arrives after the first
+  // render, and a dependency array cannot see that. The list is small.
+  const flagGatedTags = data?.filter(
+    (tag) => Utils.tagVisible(tag) && (!excludeTag || !excludeTag(tag)),
+  )
 
-  const filteredTags = useMemo(() => {
-    return filter
-      ? flagGatedTags?.filter((v) => v.label.toLowerCase().includes(filter))
-      : flagGatedTags?.filter((tag) => tag)
-  }, [flagGatedTags, filter])
+  const filteredTags = filter
+    ? flagGatedTags?.filter((v) => v.label.toLowerCase().includes(filter))
+    : flagGatedTags
   const length = (value?.length || 0) + (showArchived ? 1 : 0)
   return (
     <div className={isLoading ? 'disabled' : ''}>
