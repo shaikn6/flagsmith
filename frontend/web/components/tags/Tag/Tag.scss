@@ -11,14 +11,20 @@
   // 4px, the radius the old checkbox used.
   border-radius: var(--radius-sm);
 
-  // `--ds-chip-border` is where the utility puts the tag's hue, darkened back
-  // towards what a user picked. A system tag sets none, so this is the ink.
+  // currentColor is the tag's ink, which the palette pairs with the fill for
+  // contrast, so the box reads on any tag and swaps over with the theme. The
+  // tick takes the fill back. A system tag sets no fill and falls back.
   &--on {
     border-color: transparent;
-    background-color: oklch(
-      from var(--ds-chip-border, currentColor) calc(l - 0.35) calc(c * 2.2) h
-    );
+    background-color: currentColor;
   }
+}
+
+// Two classes, so this beats the single-class utility that sets the variable.
+// A labelled tag spends its ink on the label. A swatch has none, so its border
+// is its own fill and the picker is blocks with no sides. Lend it the ink.
+.ds-chip.tag--swatch {
+  --ds-chip-border: color-mix(in srgb, currentColor 40%, transparent);
 }
 
 // A swatch has no label, so the chip collapses to its padding. In the grids it
